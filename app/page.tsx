@@ -4,9 +4,8 @@ import React from 'react'
  export default function Home() {
   return (
 
-<>
-  <Button >Click me</Button>
-</> 
+  <div >
+   </div>
  )
 }
 
