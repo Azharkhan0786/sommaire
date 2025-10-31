@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 import NavLink from "./nav-link";
 import {Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Header() {
   const isLoggedIn = false;
@@ -30,7 +31,7 @@ export default function Header() {
           </div>
         ) : (
           <div>
-            <Link href="/sign-in">Sign In</Link>
+            <NavLink href="/sign-in">Sign In</NavLink>
           </div>
         )}
       </div>
