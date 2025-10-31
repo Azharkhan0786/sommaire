@@ -1,11 +1,10 @@
-import { Button } from '@/components/ui/button'
-import React from 'react'
+import Footer from "@/components/common/footer";
+import HeroSection from "@/components/home/hero-section";
 
- export default function Home() {
+export default function Home() {
   return (
-
-  <div >
-   </div>
- )
+    <div className="relative w-full">
+      <HeroSection />
+    </div>
+  );
 }
-
