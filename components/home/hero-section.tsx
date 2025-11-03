@@ -25,7 +25,10 @@ export default function HeroSection() {
         </div>
 
         <h1 className="text-4xl text-center font-bold mt-4">
-          Transform Your PDFs into concise summaries
+          Transform Your PDFs into{' '}
+         <span className="relative inline-block">  <span className="relative z-10 px-2">concise</span>
+         <span className="absolute inset-0 bg-rose-200/50 -rotate-2 rounded-lg transform -skew-y-1" aria-hidden="true"></span> </span>{' '}
+         summaries
         </h1>
         <h2 className="text-lg text-center text-gray-600 mb-6">
           Get a beautiful summary of the document in seconds
