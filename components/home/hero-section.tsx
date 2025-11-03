@@ -1,8 +1,7 @@
-//
-
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -16,7 +15,6 @@ export default function HeroSection() {
                        transition-all duration-1000 ease-in-out 
                        hover:scale-105 hover:shadow-lg "
           >
-           
             <Sparkles
               className="text-rose-700 h-8 w-8 mr-1 animate-pulse 
                          transition-transform duration-300 ease-in-out 
@@ -33,14 +31,15 @@ export default function HeroSection() {
           Get a beautiful summary of the document in seconds
         </h2>
 
-      <div className="flex justify-center items-center mt-6">
-          <Button
-          variant={"link"}
-          className="bg-rose-500 px-6 py-3 text-lg  transition-all duration-300 hover:scale-105"
-        >
-          Try Sommaire
-        </Button>
-      </div>
+        <div className="flex justify-center items-center mt-6">
+          <Button variant={"link"}
+            className="bg-rose-500 text-white mt-6 py-3 text-lg  transition-all duration-300 hover:scale-105 rounded-full sm:text-lg lg:text-xl px-8 sm:px-10 lg:px-12 sm:py-7 lg:py-8 bg-linear-to-r from-slate-900 to-rose-500 hover:from-rose-500 hover:to-slate-900 hover:no-underline" >
+            <Link href="/pricing" className="flex gap-2 items-center">
+              <span>Try Sommaire</span>
+              <ArrowRight  className="animate-pulse"/>
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
