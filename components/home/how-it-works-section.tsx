@@ -1,4 +1,4 @@
-import { BrainCircuit, FileOutput, FileText } from "lucide-react";
+import { BrainCircuit, FileOutput, FileText, MoveRight } from "lucide-react";
 import { ReactNode } from "react";
 
 type Step = {
@@ -44,9 +44,19 @@ export default function HowItWorksSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto relative">
         {steps.map((step, idx) => (
-          <StepItem key={idx} {...step} />
+            <div className="flex items-stretch">
+              <StepItem key={idx} {...step} />
+
+              {idx < steps.length - 1 && (
+              <div className="top-1/2 transform translate-y-1/2 z-10 -right-4 hidden md:block">
+                <MoveRight size={32} strokeWidth={1} className="text-rose-400" />
+                
+              </div>
+              )}
+             </div> 
         ))}
       </div>
+      
     </section>
   );
 }
