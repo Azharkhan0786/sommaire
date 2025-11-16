@@ -47,23 +47,28 @@ const PricingCard = ({
   items,
   id,
   paymentLink,
-}: PriceType )=> {
+}: PriceType) => {
   return (
     <div className="relative w-full max-w-lg">
-      <div>
-        <p className="text-lg lg:text-xl font-bold capitalize">{name}</p>
-        <p className="text-base-content/80 mt-2">{description}</p>
-      </div>
-
-      <div>
-        <p>{price}</p>
-        <div>
+      <div className="relative flex flex-col h-full z-10 gap-4 lg:gap-8 p-8 rounded-2xl border-[1px] border-gray-500/20">
+        <div className="flex justify-between items-center gap-4">
           <div>
-            {items.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
+            {" "}
+            <p className="text-lg lg:text-xl font-bold capitalize">{name}</p>
+            <p className="text-base-content/80 mt-2">{description}</p>
           </div>
-          <Link href={paymentLink}>Buy Now</Link>
+        </div>
+
+        <div>
+          <p>{price}</p>
+          <div>
+            <div>
+              {items.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </div>
+            <Link href={paymentLink}>Buy Now</Link>
+          </div>
         </div>
       </div>
     </div>
@@ -79,7 +84,7 @@ export default function PricingSection() {
             <h2>Pricing</h2>
           </div>
           <div className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8">
-            {plans.map((plan)=> (
+            {plans.map((plan) => (
               <PricingCard key={plan.id} {...plan} />
             ))}
           </div>
