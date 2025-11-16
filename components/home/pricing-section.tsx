@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 type PriceType = {
@@ -50,7 +51,9 @@ const PricingCard = ({
 }: PriceType) => {
   return (
     <div className="relative w-full max-w-lg">
-      <div className="relative flex flex-col h-full z-10 gap-4 lg:gap-8 p-8 rounded-2xl border-[1px] border-gray-500/20">
+      <div className={cn("relative flex flex-col h-full z-10 gap-4 lg:gap-8 p-8 rounded-2xl border-[1px] border-gray-500/20",
+      id==='pro' && 'border-rose-500 gap-5 border-2'
+      )}>
         <div className="flex justify-between items-center gap-4">
           <div>
             {" "}
