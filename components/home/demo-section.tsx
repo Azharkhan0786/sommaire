@@ -16,7 +16,7 @@ export default function DemoSection() {
             <span className="bg-linear-to-r from-rose-500 to-rose-700 bg-clip-text text-transparent ">
               this Next.js course PDF
             </span>{" "}
-            int o an easy-to-read summary!
+            into an easy-to-read summary!
           </h3>
           </div>
 
