@@ -25,21 +25,29 @@ export default function HeroSection() {
         </div>
 
         <h1 className="text-4xl text-center font-bold mt-4">
-          Transform Your PDFs into{' '}
-         <span className="relative inline-block">  <span className="relative z-10 px-2">concise</span>
-         <span className="absolute inset-0 bg-rose-200/50 -rotate-2 rounded-lg transform -skew-y-1" aria-hidden="true"></span> </span>{' '}
-         summaries
+          Transform Your PDFs into{" "}
+          <span className="relative inline-block">
+            {" "}
+            <span className="relative z-10 px-2">concise</span>
+            <span
+              className="absolute inset-0 bg-rose-200/50 -rotate-2 rounded-lg transform -skew-y-1"
+              aria-hidden="true"
+            ></span>{" "}
+          </span>{" "}
+          summaries
         </h1>
         <h2 className="text-lg text-center text-gray-600 mb-6">
           Get a beautiful summary of the document in seconds
         </h2>
 
         <div className="flex justify-center items-center mt-6">
-          <Button variant={"link"}
-            className="bg-rose-500 text-white mt-6 py-3 text-lg  transition-all duration-300 hover:scale-105 rounded-full sm:text-lg lg:text-xl px-8 sm:px-10 lg:px-12 sm:py-7 lg:py-8 bg-linear-to-r from-slate-900 to-rose-500 hover:from-rose-500 hover:to-slate-900 hover:no-underline" >
+          <Button
+            variant={"link"}
+            className="bg-rose-500 text-white mt-6 py-3 text-lg  transition-all duration-300 hover:scale-105 rounded-full sm:text-lg lg:text-xl px-8 sm:px-10 lg:px-12 sm:py-7 lg:py-8 bg-linear-to-r from-slate-900 to-rose-500 hover:from-rose-500 hover:to-slate-900 hover:no-underline"
+          >
             <Link href="/pricing" className="flex gap-2 items-center">
               <span>Try Sommaire</span>
-              <ArrowRight  className="animate-pulse"/>
+              <ArrowRight className="animate-pulse" />
             </Link>
           </Button>
         </div>
