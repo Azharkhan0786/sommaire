@@ -9,8 +9,8 @@ const schema=z.object({
     .refine((file)=>file.size <= 24*1024 *1024,{
         message:"File size must be less than 24 mb",
     })
-    .refine((file)=>file.type,startswith('applicatin/pdf'),
-    {message:"File must be a PDF"}),
+    .refine((file)=>file.type.startsWith('application/pdf'),
+    {message: "File must be a PDF"}),
 });
 
 export default function UploadForm(){
@@ -21,7 +21,7 @@ export default function UploadForm(){
         const formData=new FormData(e.currentTarget);
         const file=formData.get("file") as File;
 
-       //validating a file
+        //validating a file
         //schema with zod
         //upload the file to uploadThing
         //parse the file using langchain
