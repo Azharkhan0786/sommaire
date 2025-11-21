@@ -1,6 +1,17 @@
 'use client';
 import {Button} from "@/components/ui/button"
 import UploadFormInput from "./upload-form-input";
+import {z} from 'zod';
+
+const schema=z.object({
+    file:z
+    .instanceof(File,{message: "Invalid File"})
+    .refine((file)=>file.size <= 24*1024 *1024,{
+        message:"File size must be less than 24 mb",
+    })
+    .refine((file)=>file.type,startswith('applicatin/pdf'),
+    {message:"File must be a PDF"}),
+});
 
 export default function UploadForm(){
 
