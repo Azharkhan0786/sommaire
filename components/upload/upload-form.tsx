@@ -15,22 +15,27 @@ const schema = z.object({
 });
 
 export default function UploadForm() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  
+
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
+    console.log("submitted");
     const formData = new FormData(e.currentTarget);
     const file = formData.get("file") as File;
 
     //validating a file
     const validatedFields = schema.safeParse({ file });
 
+    console.log(validatedFields)
+
     if (!validatedFields.success) {
-      const errors = validatedFields.error.format();
-      console.log(errors.file?._errors[0] ?? "Invalid file");
+      console.log("Invalid file");
       return;
     }
-    //schema with zod
-    //upload the file to uploadThing
+
+    
+
     //parse the file using langchain
     //summarise the pdf using AI
     //save the summary to the database
@@ -40,5 +45,6 @@ export default function UploadForm() {
     <div className=" w-full max-w-2xl gap-8 flex flex-col">
       <UploadFormInput onSubmit={handleSubmit} />
     </div>
-  );
-}
+  )};
+
+
