@@ -138,8 +138,15 @@ export default function UploadForm() {
     });
 
     //parse the file using langchain
-    const summary = await generatePdfSummary(resp);
-    console.log({ summary });
+    const result = await generatePdfSummary(resp);
+
+    const { data = null, message = null } = result || {};
+
+    if (data) {
+      toast.success(" Saving PDF", {
+        description: "Hang tight! We're saving your summarized PDF.✨",
+      });
+    }
     //summarise the pdf using AI
     //save the summary to the database
     // redirect to {id} of the summary page
