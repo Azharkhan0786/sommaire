@@ -1,6 +1,7 @@
 "use server";
-
+import { generateSummaryfromOpenAI } from "@/lib/openai";
 import { fetchAndExtractPdfText } from "@/lib/langchain";
+import { _success } from "zod/v4/core";
 
 export async function generatePdfSummary(
   uploadResponse: [
@@ -42,16 +43,22 @@ export async function generatePdfSummary(
     const pdfText = await fetchAndExtractPdfText(pdfUrl);
     console.log({ pdfText });
 
-    return {
-      success: true,
-      message: "PDF text extracted successfully",
-      data: {
-        userId,
-        fileName,
-        pdfUrl,
-        text: pdfText,
-      },
-    };
+    let summary;
+    try {
+      summary = await generateSummaryfromOpenAI(pdfText);
+      console.log({ summary });
+    } catch (error) {
+      console.log(error);
+      //call gemini if any error or rate limit error arises
+    }
+
+    if (!summary) {
+      return {
+        success: false,
+        message: "Failed to generate summary",
+        data: null,
+      };
+    }
   } catch (err) {
     console.error("Error extracting PDF text:", err);
     return {
