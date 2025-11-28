@@ -69,6 +69,7 @@ import { string, unknown, z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import { generatePdfSummary } from "@/actions/upload-actions";
+import { useRef } from "react";
 
 const schema = z.object({
   file: z
@@ -82,6 +83,8 @@ const schema = z.object({
 });
 
 export default function UploadForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+
   const { startUpload } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
       toast.success("Upload successful!", {
@@ -106,55 +109,63 @@ export default function UploadForm() {
     e.preventDefault();
     console.log("Form submitted");
 
-    const formData = new FormData(e.currentTarget);
-    const file = formData.get("file") as File;
+    try {
+      const formData = new FormData(e.currentTarget);
+      const file = formData.get("file") as File;
 
-    const validatedFields = schema.safeParse({ file });
+      const validatedFields = schema.safeParse({ file });
 
-    if (!validatedFields.success) {
-      toast.error("Invalid PDF", {
-        description:
-          validatedFields.error.flatten().fieldErrors.file?.[0] ??
-          "Invalid PDF",
+      if (!validatedFields.success) {
+        toast.error("Invalid PDF", {
+          description:
+            validatedFields.error.flatten().fieldErrors.file?.[0] ??
+            "Invalid PDF",
+        });
+        return;
+      }
+
+      toast("Uploading PDF...", {
+        description: "Your PDF is being uploaded. This may take a few seconds.",
       });
-      return;
-    }
 
-    toast("Uploading PDF...", {
-      description: "Your PDF is being uploaded. This may take a few seconds.",
-    });
+      const resp = await startUpload([file]);
 
-    const resp = await startUpload([file]);
+      if (!resp) {
+        toast.error("Upload failed", {
+          description: "Please use a different file.",
+        });
+        return;
+      }
 
-    if (!resp) {
-      toast.error("Upload failed", {
-        description: "Please use a different file.",
+      toast("Processing PDF...", {
+        description: "Hang tight! Our AI is reading through your document.",
       });
-      return;
+
+      //parse the file using langchain
+      const result = await generatePdfSummary(resp);
+
+      const { data = null, message = null } = result || {};
+
+      if (data) {
+        toast.success(" Saving PDF", {
+          description: "Hang tight! We're saving your summarized PDF.✨",
+        });
+      }
+
+      formRef.current?.reset();
+      console.log("Form reset completed");
+      //summarise the pdf using AI
+      //save the summary to the database
+      // redirect to {id} of the summary page
+    } catch (err) {
+      console.error("error occured during submission", err);
+      formRef.current?.reset();
     }
-
-    toast("Processing PDF...", {
-      description: "Hang tight! Our AI is reading through your document.",
-    });
-
-    //parse the file using langchain
-    const result = await generatePdfSummary(resp);
-
-    const { data = null, message = null } = result || {};
-
-    if (data) {
-      toast.success(" Saving PDF", {
-        description: "Hang tight! We're saving your summarized PDF.✨",
-      });
-    }
-    //summarise the pdf using AI
-    //save the summary to the database
-    // redirect to {id} of the summary page
   };
 
   return (
     <div className="w-full max-w-2xl gap-8 flex flex-col">
-      <UploadFormInput onSubmit={handleSubmit} />
+      <UploadFormInput ref={formRef} onSubmit={handleSubmit} />
     </div>
   );
 }
