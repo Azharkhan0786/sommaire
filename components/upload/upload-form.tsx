@@ -69,7 +69,7 @@ import { string, unknown, z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import { generatePdfSummary } from "@/actions/upload-actions";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const schema = z.object({
   file: z
@@ -84,6 +84,7 @@ const schema = z.object({
 
 export default function UploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { startUpload } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
@@ -109,7 +110,11 @@ export default function UploadForm() {
     e.preventDefault();
     console.log("Form submitted");
 
+
+
     try {
+
+    setIsLoading(true);
       const formData = new FormData(e.currentTarget);
       const file = formData.get("file") as File;
 
@@ -121,6 +126,8 @@ export default function UploadForm() {
             validatedFields.error.flatten().fieldErrors.file?.[0] ??
             "Invalid PDF",
         });
+            setIsLoading(false);
+        
         return;
       }
 
@@ -134,6 +141,8 @@ export default function UploadForm() {
         toast.error("Upload failed", {
           description: "Please use a different file.",
         });
+            setIsLoading(false);
+
         return;
       }
 
@@ -153,7 +162,10 @@ export default function UploadForm() {
       }
 
       formRef.current?.reset();
-      console.log("Form reset completed");
+      if(data?.summary){
+        //save the summary to the database
+      }
+      
       //summarise the pdf using AI
       //save the summary to the database
       // redirect to {id} of the summary page
@@ -165,7 +177,9 @@ export default function UploadForm() {
 
   return (
     <div className="w-full max-w-2xl gap-8 flex flex-col">
-      <UploadFormInput ref={formRef} onSubmit={handleSubmit} />
+      <UploadFormInput 
+      isLoading={isLoading}
+      ref={formRef} onSubmit={handleSubmit} />
     </div>
   );
 }

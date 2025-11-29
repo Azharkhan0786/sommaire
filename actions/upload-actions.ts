@@ -50,6 +50,13 @@ export async function generatePdfSummary(
     } catch (error) {
       console.log(error);
       //call gemini if any error or rate limit error arises
+      if (error instanceof Error && error.message==='RATE_LIMIT_EXCEEDED') {
+        try{
+
+        } catch{
+          
+        }
+      }
     }
 
     if (!summary) {
@@ -59,7 +66,16 @@ export async function generatePdfSummary(
         data: null,
       };
     }
-  } catch (err) {
+
+    return {
+      success: true,
+      message: "PDF summary generated successfully",
+      data: {
+        summary,
+      }
+    }
+  }
+   catch (err) {
     console.error("Error extracting PDF text:", err);
     return {
       success: false,
