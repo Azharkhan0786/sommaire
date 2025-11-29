@@ -50,11 +50,15 @@ export async function generatePdfSummary(
     } catch (error) {
       console.log(error);
       //call gemini if any error or rate limit error arises
-      if (error instanceof Error && error.message==='RATE_LIMIT_EXCEEDED') {
-        try{
-
-        } catch{
-          
+      if (error instanceof Error && error.message === "RATE_LIMIT_EXCEEDED") {
+        try {
+          summary = await generateSummaryfromGemini(pdfText);
+        } catch (geminiError) {
+          console.error(
+            "Gemini API failed after OpenAI rate limit exceeded",
+            geminiError
+          );
+          throw new Error("Both OpenAI and Gemini API calls failed");
         }
       }
     }
@@ -72,10 +76,9 @@ export async function generatePdfSummary(
       message: "PDF summary generated successfully",
       data: {
         summary,
-      }
-    }
-  }
-   catch (err) {
+      },
+    };
+  } catch (err) {
     console.error("Error extracting PDF text:", err);
     return {
       success: false,
