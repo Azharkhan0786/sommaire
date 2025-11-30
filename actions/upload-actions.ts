@@ -2,6 +2,7 @@
 import { generateSummaryfromOpenAI } from "@/lib/openai";
 import { fetchAndExtractPdfText } from "@/lib/langchain";
 import { _success } from "zod/v4/core";
+import { generateSummaryFromGemini } from "@/lib/geminiai";
 
 export async function generatePdfSummary(
   uploadResponse: [
@@ -45,14 +46,14 @@ export async function generatePdfSummary(
 
     let summary;
     try {
-      summary = await generateSummaryfromOpenAI(pdfText);
+      summary = await generateSummaryFromGemini(pdfText);
       console.log({ summary });
     } catch (error) {
       console.log(error);
       //call gemini if any error or rate limit error arises
       if (error instanceof Error && error.message === "RATE_LIMIT_EXCEEDED") {
         try {
-          summary = await generateSummaryfromGemini(pdfText);
+          summary = await generateSummaryFromGemini(pdfText);
         } catch (geminiError) {
           console.error(
             "Gemini API failed after OpenAI rate limit exceeded",
