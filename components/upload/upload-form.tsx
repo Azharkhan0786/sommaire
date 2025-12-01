@@ -1,71 +1,7 @@
-// "use client";
-// import { Button } from "@/components/ui/button";
-// import UploadFormInput from "./upload-form-input";
-// import { z } from "zod";
-// import { useUploadThing } from "@/utils/uploadthing";
-// import { on } from "events";
-
-// const schema = z.object({
-//   file: z
-//     .instanceof(File, { message: "Invalid File" })
-//     .refine((file) => file.size <= 24 * 1024 * 1024, {
-//       message: "File size must be less than 24 mb",
-//     })
-//     .refine((file) => file.type.startsWith("application/pdf"), {
-//       message: "File must be a PDF",
-//     }),
-// });
-
-// export default function UploadForm() {
-//   const { startUpload } = useUploadThing("pdfUploader",
-//     {
-//     onClientUploadComplete: () => {
-//       console.log("Upload complete");
-//   },
-//   onUploadError: (error) => {
-//     console.error("Upload error:", error);
-// },
-// onUploadBegin: () => {
-//     console.log("Upload started");
-// }
-// });
-
-//   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     console.log("submitted");
-//     const formData = new FormData(e.currentTarget);
-//     const file = formData.get("file") as File;
-
-//     //validating a file
-//     const validatedFields = schema.safeParse({ file });
-
-//     console.log(validatedFields)
-
-//     if (!validatedFields.success) {
-//       console.log("Invalid file");
-//       return
-//     }
-
-//     const resp=await startUpload([file]);
-//     if (!resp) {
-//       console.log("Upload failed");
-//       return
-//     }
-//     //parse the file using langchain
-//     //summarise the pdf using AI
-//     //save the summary to the database
-//     // redirect ti {id} of the summary page
-//   };
-//   return (
-//     <div className=" w-full max-w-2xl gap-8 flex flex-col">
-//       <UploadFormInput onSubmit={handleSubmit} />
-//     </div>
-//   )};
-
 "use client";
 import { Button } from "@/components/ui/button";
 import UploadFormInput from "./upload-form-input";
-import { string, unknown, z } from "zod";
+import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import { generatePdfSummary } from "@/actions/upload-actions";
@@ -110,11 +46,9 @@ export default function UploadForm() {
     e.preventDefault();
     console.log("Form submitted");
 
-
-
     try {
+      setIsLoading(true);
 
-    setIsLoading(true);
       const formData = new FormData(e.currentTarget);
       const file = formData.get("file") as File;
 
@@ -126,8 +60,6 @@ export default function UploadForm() {
             validatedFields.error.flatten().fieldErrors.file?.[0] ??
             "Invalid PDF",
         });
-            setIsLoading(false);
-        
         return;
       }
 
@@ -141,8 +73,6 @@ export default function UploadForm() {
         toast.error("Upload failed", {
           description: "Please use a different file.",
         });
-            setIsLoading(false);
-
         return;
       }
 
@@ -150,10 +80,8 @@ export default function UploadForm() {
         description: "Hang tight! Our AI is reading through your document.",
       });
 
-      //parse the file using langchain
       const result = await generatePdfSummary(resp);
-
-      const { data = null, message = null } = result || {};
+      const { data = null } = result || {};
 
       if (data) {
         toast.success(" Saving PDF", {
@@ -162,24 +90,22 @@ export default function UploadForm() {
       }
 
       formRef.current?.reset();
-      if(data?.summary){
-        //save the summary to the database
-      }
-      
-      //summarise the pdf using AI
-      //save the summary to the database
-      // redirect to {id} of the summary page
     } catch (err) {
       console.error("error occured during submission", err);
       formRef.current?.reset();
+    } finally {
+      // ⬅️ THIS FIXES YOUR LOADING ISSUE
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="w-full max-w-2xl gap-8 flex flex-col">
       <UploadFormInput 
-      isLoading={isLoading}
-      ref={formRef} onSubmit={handleSubmit} />
+        isLoading={isLoading}
+        ref={formRef}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
