@@ -89,3 +89,22 @@ export async function generatePdfSummary(
   }
 }
 
+
+export async function storePdfSummaryAction() {
+  //user is loggen in and has a user id
+  //save PDF summary
+  //save PDF summary()
+
+
+  try{
+
+  }
+
+  catch(error){
+    return{
+    success:false,
+    message:
+    error instanceof Error ? error.message:'Error saving PDF summary',
+    }
+  }
+}
