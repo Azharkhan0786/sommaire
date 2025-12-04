@@ -4,7 +4,7 @@ import UploadFormInput from "./upload-form-input";
 import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
-import { generatePdfSummary } from "@/actions/upload-actions";
+import { generatePdfSummary, storePdfSummaryAction } from "@/actions/upload-actions";
 import { useRef, useState } from "react";
 
 const schema = z.object({
@@ -30,8 +30,6 @@ export default function UploadForm() {
     },
 
     onUploadError: (err) => {
-      console.log("error occured while uploading", err);
-
       toast.error("Error occurred while uploading", {
         description: err.message,
       });
@@ -44,7 +42,6 @@ export default function UploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
 
     try {
       setIsLoading(true);
@@ -52,49 +49,52 @@ export default function UploadForm() {
       const formData = new FormData(e.currentTarget);
       const file = formData.get("file") as File;
 
-      const validatedFields = schema.safeParse({ file });
-
-      if (!validatedFields.success) {
+      const validated = schema.safeParse({ file });
+      if (!validated.success) {
         toast.error("Invalid PDF", {
-          description:
-            validatedFields.error.flatten().fieldErrors.file?.[0] ??
-            "Invalid PDF",
+          description: validated.error.flatten().fieldErrors.file?.[0],
         });
         return;
       }
 
-      toast("Uploading PDF...", {
-        description: "Your PDF is being uploaded. This may take a few seconds.",
-      });
-
+      toast("Uploading PDF...");
       const resp = await startUpload([file]);
-
       if (!resp) {
-        toast.error("Upload failed", {
-          description: "Please use a different file.",
-        });
+        toast.error("Upload failed.");
         return;
       }
 
-      toast("Processing PDF...", {
-        description: "Hang tight! Our AI is reading through your document.",
-      });
-
+      toast("Processing PDF...");
       const result = await generatePdfSummary(resp);
-      const { data = null } = result || {};
 
-      if (data) {
-        toast.success(" Saving PDF", {
-          description: "Hang tight! We're saving your summarized PDF.✨",
-        });
+      const { data = null } = result || {};
+      if (!data?.summary) {
+        toast.error("Failed to generate summary.");
+        return;
       }
 
+      toast.success("Saving summary...");
+
+      const fileUrl = resp[0].serverData.file.url;
+      const userId = resp[0].serverData.userId;
+      const fileName = file.name;
+      const title = file.name.replace(".pdf", "");
+
+      await storePdfSummaryAction({
+        userId,
+        fileUrl,
+        summary: data.summary,
+        title,
+        fileName,
+      });
+
+      toast.success("PDF summary saved successfully!");
       formRef.current?.reset();
     } catch (err) {
-      console.error("error occured during submission", err);
+      console.error("Submission error:", err);
+      toast.error("Something went wrong.");
       formRef.current?.reset();
     } finally {
-      // ⬅️ THIS FIXES YOUR LOADING ISSUE
       setIsLoading(false);
     }
   };

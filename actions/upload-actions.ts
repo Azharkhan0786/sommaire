@@ -1,8 +1,18 @@
 "use server";
 import { generateSummaryfromOpenAI } from "@/lib/openai";
 import { fetchAndExtractPdfText } from "@/lib/langchain";
-import { _success } from "zod/v4/core";
 import { generateSummaryFromGemini } from "@/lib/geminiai";
+import { auth } from "@clerk/nextjs/server";
+import { getDbConnection } from "@/lib/db";
+import { tr } from "zod/v4/locales";
+
+interface PdfSummaryType {
+  userId: string;
+  fileUrl: string;
+  summary: string;
+  title: string;
+  fileName: string;
+}
 
 export async function generatePdfSummary(
   uploadResponse: [
@@ -89,22 +99,89 @@ export async function generatePdfSummary(
   }
 }
 
+interface PdfSummaryType {
+  userId: string;
+  fileUrl: string;
+  summary: string;
+  title: string;
+  fileName: string;
+}
 
-export async function storePdfSummaryAction() {
-  //user is loggen in and has a user id
-  //save PDF summary
-  //save PDF summary()
+// ----------------------------------
+// Save summary into database
+// ----------------------------------
+async function savePDFSummary({
+  userId,
+  fileUrl,
+  summary,
+  title,
+  fileName,
+}: PdfSummaryType) {
+  try {
+    const sql = await getDbConnection();
 
+    await sql`
+      INSERT INTO pdf_summaries (
+        user_id,
+        original_file_url,
+        summary_text,
+        title,
+        file_name
+      )
+      VALUES (
+        ${userId},
+        ${fileUrl},
+        ${summary},
+        ${title},
+        ${fileName}
+      );
+    `;
 
-  try{
-
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving PDF summary:", error);
+    throw error;
   }
+}
 
-  catch(error){
-    return{
-    success:false,
-    message:
-    error instanceof Error ? error.message:'Error saving PDF summary',
+// ----------------------------------
+// Store summary action (called by client)
+// ----------------------------------
+export async function storePdfSummaryAction({
+  userId,
+  fileUrl,
+  summary,
+  title,
+  fileName,
+}: PdfSummaryType) {
+  try {
+    const { userId: loggedInUserId } = await auth();
+
+    if (!loggedInUserId) {
+      return {
+        success: false,
+        message: "User not found",
+      };
     }
+
+    const savedSummary = await savePDFSummary({
+      userId: loggedInUserId,
+      fileUrl,
+      summary,
+      title,
+      fileName,
+    });
+
+    return {
+      success: true,
+      message: "PDF summary saved successfully",
+      data: savedSummary,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Error saving PDF summary",
+    };
   }
 }
