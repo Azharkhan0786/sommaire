@@ -1,10 +1,10 @@
+
+
 "use server";
-import { generateSummaryfromOpenAI } from "@/lib/openai";
 import { fetchAndExtractPdfText } from "@/lib/langchain";
 import { generateSummaryFromGemini } from "@/lib/geminiai";
-import { auth } from "@clerk/nextjs/server";
+import { auth,currentUser } from "@clerk/nextjs/server";
 import { getDbConnection } from "@/lib/db";
-import { tr } from "zod/v4/locales";
 
 interface PdfSummaryType {
   userId: string;
@@ -14,25 +14,12 @@ interface PdfSummaryType {
   fileName: string;
 }
 
-export async function generatePdfSummary(
-  uploadResponse: [
-    {
-      serverData: {
-        userId: string;
-        file: {
-          url: string;
-          name: string;
-        };
-      };
-    }
-  ]
-) {
+// -----------------------------
+// GENERATE PDF SUMMARY
+// -----------------------------
+export async function generatePdfSummary(uploadResponse: any) {
   if (!uploadResponse) {
-    return {
-      success: false,
-      message: "No upload response",
-      data: null,
-    };
+    return { success: false, message: "No upload response", data: null };
   }
 
   const {
@@ -43,36 +30,12 @@ export async function generatePdfSummary(
   } = uploadResponse[0];
 
   if (!pdfUrl) {
-    return {
-      success: false,
-      message: "No upload response",
-      data: null,
-    };
+    return { success: false, message: "PDF URL missing", data: null };
   }
 
   try {
     const pdfText = await fetchAndExtractPdfText(pdfUrl);
-    console.log({ pdfText });
-
-    let summary;
-    try {
-      summary = await generateSummaryFromGemini(pdfText);
-      console.log({ summary });
-    } catch (error) {
-      console.log(error);
-      //call gemini if any error or rate limit error arises
-      if (error instanceof Error && error.message === "RATE_LIMIT_EXCEEDED") {
-        try {
-          summary = await generateSummaryFromGemini(pdfText);
-        } catch (geminiError) {
-          console.error(
-            "Gemini API failed after OpenAI rate limit exceeded",
-            geminiError
-          );
-          throw new Error("Both OpenAI and Gemini API calls failed");
-        }
-      }
-    }
+    const summary = await generateSummaryFromGemini(pdfText);
 
     if (!summary) {
       return {
@@ -84,32 +47,47 @@ export async function generatePdfSummary(
 
     return {
       success: true,
-      message: "PDF summary generated successfully",
-      data: {
-        summary,
-      },
+      message: "Summary generated",
+      data: { summary, fileName },
     };
   } catch (err) {
-    console.error("Error extracting PDF text:", err);
+    console.error("Error extracting PDF:", err);
     return {
       success: false,
-      message: "Error extracting PDF text",
+      message: "Error reading PDF",
       data: null,
     };
   }
 }
 
-interface PdfSummaryType {
-  userId: string;
-  fileUrl: string;
-  summary: string;
-  title: string;
-  fileName: string;
+// ----------------------------------------------------
+// NEW FUNCTION ADDED HERE 👇
+// Ensures the Clerk user exists in `users` table
+// Prevents FOREIGN KEY ERRORS when saving summaries
+// ----------------------------------------------------
+async function ensureUserExists(userId: string, user: any) {
+  const sql = getDbConnection();
+
+  const email = user?.emailAddresses?.[0]?.emailAddress || "unknown@example.com";
+  const fullName = user?.fullName || null;
+
+  // Check if user already exists
+  const existing = await sql`
+    SELECT * FROM users WHERE user_id = ${userId};
+  `;
+
+  if (existing.length === 0) {
+    await sql`
+      INSERT INTO users (user_id, email, full_name)
+      VALUES (${userId}, ${email}, ${fullName});
+    `;
+  }
 }
 
-// ----------------------------------
-// Save summary into database
-// ----------------------------------
+
+// -----------------------------
+// SAVE PDF SUMMARY TO DATABASE
+// -----------------------------
 async function savePDFSummary({
   userId,
   fileUrl,
@@ -118,7 +96,7 @@ async function savePDFSummary({
   fileName,
 }: PdfSummaryType) {
   try {
-    const sql = await getDbConnection();
+    const sql = getDbConnection();
 
     await sql`
       INSERT INTO pdf_summaries (
@@ -144,9 +122,9 @@ async function savePDFSummary({
   }
 }
 
-// ----------------------------------
-// Store summary action (called by client)
-// ----------------------------------
+// -----------------------------
+// STORE SUMMARY ACTION (called by FE)
+// -----------------------------
 export async function storePdfSummaryAction({
   userId,
   fileUrl,
@@ -156,13 +134,17 @@ export async function storePdfSummaryAction({
 }: PdfSummaryType) {
   try {
     const { userId: loggedInUserId } = await auth();
+    const user = await currentUser(); // ⭐ FIX: get full Clerk user details
 
     if (!loggedInUserId) {
       return {
         success: false,
-        message: "User not found",
+        message: "User not authenticated",
       };
     }
+
+    // ⭐ FIXED: pass full Clerk user object to ensureUserExists()
+    await ensureUserExists(loggedInUserId, user);
 
     const savedSummary = await savePDFSummary({
       userId: loggedInUserId,
@@ -174,7 +156,7 @@ export async function storePdfSummaryAction({
 
     return {
       success: true,
-      message: "PDF summary saved successfully",
+      message: "PDF saved successfully",
       data: savedSummary,
     };
   } catch (error) {
@@ -185,3 +167,5 @@ export async function storePdfSummaryAction({
     };
   }
 }
+
+
