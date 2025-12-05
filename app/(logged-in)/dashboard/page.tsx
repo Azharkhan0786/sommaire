@@ -9,8 +9,8 @@ export default function DashboardPage() {
         <div className=" px-12 py-12 sm:py-24">
          <div className="flex justify-between gap-4 mb-8"> 
             <div className="flex flex-col gap-4">
-                <h1>Your Summaries</h1>
-             <p>Transform your PDFs into concise,actionable insights</p>
+                <h1 className="text-4xl font-bold tracking-tight bg-linear-to-r from-gray-600 to-gray-900 text-transparent bg-clip-text">Your Summaries</h1>
+             <p className="text-gray-600">Transform your PDFs into concise,actionable insights</p>
             </div>
           <Button
             variant={"link"}
@@ -20,6 +20,11 @@ export default function DashboardPage() {
               New Summary
             </Link>
           </Button>
+          </div>
+          <div  className="mb-8">
+            <div className="bg-rose-50 border border-rose-300 rounded-lg p-4 text-rose-800">
+                <p className="text-sm">You've Reached the limit of 5 uploads on the Basic Plan.</p>
+            </div>
           </div>
         </div>
       </div>
