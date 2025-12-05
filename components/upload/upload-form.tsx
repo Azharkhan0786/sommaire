@@ -5,7 +5,8 @@ import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
 import { generatePdfSummary, storePdfSummaryAction } from "@/actions/upload-actions";
-import { useRef, useState } from "react";
+import { use, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   file: z
@@ -21,6 +22,7 @@ const schema = z.object({
 export default function UploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const { startUpload } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
@@ -108,6 +110,7 @@ export default function UploadForm() {
             description:"Your PDF summary has been saved successfully! 🎉",
           }); 
           formRef.current?.reset();
+          router.push(`/summaries/${storeResult.id}`);
         }
     } 
   }

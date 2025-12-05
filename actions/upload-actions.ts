@@ -5,6 +5,7 @@ import { fetchAndExtractPdfText } from "@/lib/langchain";
 import { generateSummaryFromGemini } from "@/lib/geminiai";
 import { auth,currentUser } from "@clerk/nextjs/server";
 import { getDbConnection } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 interface PdfSummaryType {
   userId: string;
@@ -159,6 +160,11 @@ export async function storePdfSummaryAction({
       message: "PDF saved successfully",
       data: savedSummary,
     };
+
+    //revalidate our cache
+    revalidatePath(`summaries/${savedSummary.id}`);
+
+
   } catch (error) {
     return {
       success: false,
