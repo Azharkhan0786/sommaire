@@ -2,19 +2,17 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import SummaryCard from "@/components/summaries/summary-card";
-import { title } from "process";
+import { getSummaries } from "@/lib/summaries";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const user = await currentUser();
+  const userId = user?.id;
+  if (!userId)
+    return  redirect("/sign-in");
   const uploadLimit = 5;
-  const summaries=[
-    {
-      id:1,
-      title:'Computer Networking Notes for Tech Placements (1)',
-      created_at:'2025-12-04 16:57:07.051351+00',
-      summary_text:'description',
-      status:'completed',
-    },
-  ]
+  const summaries = await getSummaries(userId);
 
   return (
     <main className="min-h-screen">
