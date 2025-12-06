@@ -1,12 +1,22 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
+import SummaryCard from "@/components/summaries/summary-card";
+import { title } from "process";
 
 export default function DashboardPage() {
-        const uploadLimit=5;
+  const uploadLimit = 5;
+  const summaries=[
+    {
+      id:1,
+      title:'Computer Networking Notes for Tech Placements (1)',
+      created_at:'2025-12-04 16:57:07.051351+00',
+      summary_text:'description',
+      status:'completed',
+    },
+  ]
 
   return (
-    
     <main className="min-h-screen">
       <div className="container mx-auto flex flex-col gap-4">
         <div className=" px-12 py-12 sm:py-24">
@@ -32,16 +42,23 @@ export default function DashboardPage() {
           <div className="mb-8">
             <div className="bg-rose-50 border border-rose-300 rounded-lg p-4 text-rose-800">
               <p className="text-sm">
-                You've Reached the limit of {uploadLimit} uploads on the Basic Plan.
-                <Link href={"/#pricing"}
-                className="text-rose-800 underline font-medium items-center underline-offset-2 inline-flex">
+                You've Reached the limit of {uploadLimit} uploads on the Basic
+                Plan.
+                <Link
+                  href={"/#pricing"}
+                  className="text-rose-800 underline font-medium items-center underline-offset-2 inline-flex"
+                >
                   Click here to upgrade to Pro{" "}
                   <ArrowRight className=" w-4 h-4  inline-block" />
-                    </Link>{' '}
-                   for unlimited uploads
-               
+                </Link>{" "}
+                for unlimited uploads
               </p>
             </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 sm:px-0">
+            {summaries.map((summary, index) => (
+              <SummaryCard key={index} summary={summary} />
+            ))}
           </div>
         </div>
       </div>
