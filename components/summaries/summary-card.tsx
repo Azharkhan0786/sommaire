@@ -3,6 +3,7 @@ import DeleteButton from "./delete-button";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {formatDistanceToNow} from 'date-fns'
 
 const SummaryHeader = ({
   fileurl,
@@ -20,7 +21,10 @@ const SummaryHeader = ({
         <h3 className=" text-base xl:text-lg font-semibold text-gray-900 truncate w-4/5">
           {title}
         </h3>
-        <p className="text-sm text-gray-500">{new Date(createdAt).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500">
+            {formatDistanceToNow(new Date(createdAt),{
+                addSuffix:true
+            })}</p>
       </div>
     </div>
   );
