@@ -15,6 +15,13 @@ import { useState } from "react";
 
 export default function DeleteButton() {
   const [open, setOpen] = useState(false);
+
+const handleDelete=async()=>{
+    //TODO:Delete Summary
+    //TODO:deletesummary(summary.id);
+    setOpen(false); //closing the dialog as well with deleting the summary
+};
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* Trigger must have exactly ONE React element as child */}
@@ -54,6 +61,7 @@ export default function DeleteButton() {
           <Button
             variant="destructive"
             className="bg-gray-900 hover:bg-gray-600"
+            onClick={handleDelete}
           >
             Delete{" "}
           </Button>
