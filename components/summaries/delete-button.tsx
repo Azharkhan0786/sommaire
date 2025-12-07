@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { deleteSummary } from "@/actions/summary-actions";
+import { deleteSummaryAction } from "@/actions/summary-actions";
 import { toast } from "sonner";
 import { title } from "process";
 
@@ -26,12 +26,12 @@ export default function DeleteButton({summaryId}:DeleteButtonProps) {
 const handleDelete=async()=>{
     //TODO:Delete Summary
     //TODO:deletesummary(summaryId);
-    const result =await deleteSummary({summaryId});
-    if(!result.success)
+    const result =await deleteSummaryAction({summaryId});
+    if(!result.success){
    toast.error("Error", {
   description: "Something went wrong while deleting.",
 });
-    
+    }
 
     setOpen(false); //closing the dialog as well with deleting the summary
 };
