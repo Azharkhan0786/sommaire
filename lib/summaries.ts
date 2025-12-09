@@ -11,7 +11,18 @@ export async function getSummaries(userId:string) {
 export async function getSummaryById(id:string) {
       try{
         const sql=await getDbConnection();
-        const[summary]=await sql`SELECT * FROM pdf_summaries
+        const[summary]=await sql`SELECT 
+        id,
+        user_id,
+        title,
+        original_file_url,
+        summary_text,
+        status,
+        created_at,
+        updated_at,
+        file_name,
+        LENGHT()
+
             where id=${id}`;
             return summary;
       }
@@ -19,4 +30,4 @@ export async function getSummaryById(id:string) {
         console.error('Error fetching summary by id',err);
         return null;
       }
-}
+} 
