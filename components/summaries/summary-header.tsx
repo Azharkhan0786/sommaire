@@ -8,14 +8,14 @@ export default function SummaryHeader({title,createdAt}:{title:string,createdAt:
     return( 
     <div className="flex gap-4 mb-4 justify-between">
         <div className="space-y-4">
-            <div className="">
+            <div className="flex items-center gap-4 flex-wrap">
                 <Badge 
                 variant={"secondary"}
                 className="text-rose-500 relative px-4 py-1.5 text-sm font-medium bg-white/80 backdrop-blur-xs rounded-full hover:bg-white/90 transition-all duration-200 shadow-xs hover:shadow-md">
                     <Sparkles/>
                     AI Summary
                 </Badge>
-                <div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4 text-rose-400"/>
                     {new Date(createdAt).toLocaleString('en-US',
                         {
