@@ -9,7 +9,9 @@ export default function SummaryHeader({title}:{title:string}){
     <div className="flex gap-4 mb-4 justify-between">
         <div className="space-y-4">
             <div className="">
-                <Badge   className="bg-rose-500 ">
+                <Badge 
+                variant={"secondary"}
+                className="text-rose-500 relative px-4 py-1.5 text-sm font-medium bg-white/80 backdrop-blur-xs rounded-full hover:bg-white/90 transition-all duration-200 shadow-xs hover:shadow-md">
                     <Sparkles/>
                     AI Summary
                 </Badge>
