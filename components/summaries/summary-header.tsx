@@ -1,12 +1,21 @@
-import { Button } from "../ui/button";
+import { Button, } from "../ui/button";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft,Sparkles } from "lucide-react";
+import { Badge } from "../ui/badge";
+
 
 export default function SummaryHeader({title}:{title:string}){
     return( 
     <div className="flex gap-4 mb-4 justify-between">
-        <div></div>
-        <div >
+        <div className="space-y-4">
+            <div className="">
+                <Badge   className="bg-rose-500 ">
+                    <Sparkles/>
+                    AI Summary
+                </Badge>
+            </div>
+        </div>
+        <div>
             <Link href="/dashboard">
             <Button variant={'link'}
              size={'sm'}
