@@ -1,10 +1,10 @@
 import { Button, } from "../ui/button";
 import Link from "next/link";
-import { ChevronLeft,Sparkles } from "lucide-react";
+import { Calendar, ChevronLeft,Sparkles } from "lucide-react";
 import { Badge } from "../ui/badge";
 
 
-export default function SummaryHeader({title}:{title:string}){
+export default function SummaryHeader({title,createdAt}:{title:string,createdAt:string}){
     return( 
     <div className="flex gap-4 mb-4 justify-between">
         <div className="space-y-4">
@@ -15,6 +15,16 @@ export default function SummaryHeader({title}:{title:string}){
                     <Sparkles/>
                     AI Summary
                 </Badge>
+                <div>
+                    <Calendar className="h-4 w-4 text-rose-400"/>
+                    {new Date(createdAt).toLocaleString('en-US',
+                        {
+                            year:'numeric',
+                            month:'long',
+                            day:'numeric',
+                        }
+                    )}
+                </div>
             </div>
         </div>
         <div>

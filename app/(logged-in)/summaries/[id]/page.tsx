@@ -17,14 +17,14 @@ export default async function SummaryPage(props: {
     notFound();
   }
 
-  const { title, summary_text, file_name,word_count } = summary;
+  const { title, summary_text,created_at, file_name,word_count } = summary;
 
   return (
     <div className="relative isolate min-h-screen bg-linear-to-r from-rose-50/40 to-white">
       <div className="container mx-auto flex flex-col gap-4">
         <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-24">
           <div className="flex flex-col">
-            <SummaryHeader title={title} />
+            <SummaryHeader title={title} createdAt={created_at}/>
           </div>
           {file_name && <SourceInfo fileName={file_name} />}
           <div className="relative mt-4 sm:mt-8 lg:mt-16 ">
