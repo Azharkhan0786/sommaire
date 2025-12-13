@@ -1,6 +1,6 @@
 import SourceInfo from "@/components/summaries/source-info";
 import SummaryHeader from "@/components/summaries/summary-header";
-import { getSummaryById, } from "@/lib/summaries";
+import { getSummaryById } from "@/lib/summaries";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
 import SummaryViewer from "@/components/summaries/summary-viewer";
@@ -17,14 +17,26 @@ export default async function SummaryPage(props: {
     notFound();
   }
 
-  const { title, summary_text,created_at, file_name,word_count } = summary;
+  const {
+    title,
+    summary_text,
+    created_at,
+    file_name,
+    word_count,
+  } = summary;
+
+  const readingTime=Math.ceil((word_count || 0)/200);
 
   return (
     <div className="relative isolate min-h-screen bg-linear-to-r from-rose-50/40 to-white">
       <div className="container mx-auto flex flex-col gap-4">
         <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-24">
           <div className="flex flex-col">
-            <SummaryHeader title={title} createdAt={created_at}/>
+            <SummaryHeader
+              title={title}
+              createdAt={created_at}
+              readingTime={readingTime}
+            />
           </div>
           {file_name && <SourceInfo fileName={file_name} />}
           <div className="relative mt-4 sm:mt-8 lg:mt-16 ">
@@ -35,7 +47,7 @@ export default async function SummaryPage(props: {
                 {word_count.toLocaleString()} words
               </div>
               <div className="relative mt-8 sm:mt-6 flex justify-center">
-                <SummaryViewer summary={summary.summary_text}/>
+                <SummaryViewer summary={summary.summary_text} />
               </div>
             </div>
           </div>
