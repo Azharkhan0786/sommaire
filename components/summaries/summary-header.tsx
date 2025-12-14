@@ -40,7 +40,7 @@ export default function SummaryHeader({
           <span className="bg-linear-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">{title}</span></h1>
       </div>
       <div>
-        <Link href="/dashboard">
+        <Link href="/dashboard" className="self-start">
           <Button
             variant={"link"}
             size={"sm"}
