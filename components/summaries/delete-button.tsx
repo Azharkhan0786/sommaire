@@ -14,27 +14,26 @@ import {
 import { useState } from "react";
 import { deleteSummaryAction } from "@/actions/summary-actions";
 import { toast } from "sonner";
-import { title } from "process";
 
-interface DeleteButtonProps{
-  summaryId:string;
+interface DeleteButtonProps {
+  summaryId: string;
 }
 
-export default function DeleteButton({summaryId}:DeleteButtonProps) {
+export default function DeleteButton({ summaryId }: DeleteButtonProps) {
   const [open, setOpen] = useState(false);
 
-const handleDelete=async()=>{
+  const handleDelete = async () => {
     //TODO:Delete Summary
     //TODO:deletesummary(summaryId);
-    const result =await deleteSummaryAction({summaryId});
-    if(!result.success){
-   toast.error("Error", {
-  description: "Something went wrong while deleting.",
-});
+    const result = await deleteSummaryAction({ summaryId });
+    if (!result.success) {
+      toast.error("Error", {
+        description: "Something went wrong while deleting.",
+      });
     }
 
     setOpen(false); //closing the dialog as well with deleting the summary
-};
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,8 +67,8 @@ const handleDelete=async()=>{
             variant="ghost"
             className="bg-gray-50 border border-gray-200
                      hover:text-gray-600 hover:bg-rose-50"
-                    onClick={()=> setOpen(false)}
-                  >
+            onClick={() => setOpen(false)}
+          >
             Cancel
           </Button>
           <Button
