@@ -6,6 +6,7 @@ import { generateSummaryFromGemini } from "@/lib/geminiai";
 import { auth,currentUser } from "@clerk/nextjs/server";
 import { getDbConnection } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { id } from "zod/v4/locales";
 
 interface PdfSummaryType {
   userId: string;
@@ -162,6 +163,11 @@ export async function storePdfSummaryAction({
 
     //revalidate our cache
     revalidatePath(`summaries/${savedSummary.id}`);
+
+    return {
+      successs:true,
+      id:savedSummary.id,
+    }
 
 
   } catch (error) {
