@@ -135,16 +135,12 @@ export async function storePdfSummaryAction({
 }: PdfSummaryType) {
   try {
     const { userId: loggedInUserId } = await auth();
-    const user = await currentUser(); // ⭐ FIX: get full Clerk user details
+    const user = await currentUser();
 
     if (!loggedInUserId) {
-      return {
-        success: false,
-        message: "User not authenticated",
-      };
+      return { success: false, message: "User not authenticated" };
     }
 
-    // ⭐ FIXED: pass full Clerk user object to ensureUserExists()
     await ensureUserExists(loggedInUserId, user);
 
     const savedSummary = await savePDFSummary({
@@ -155,21 +151,15 @@ export async function storePdfSummaryAction({
       fileName,
     });
 
+    // ✅ revalidate BEFORE return
+    revalidatePath("/dashboard");
+    revalidatePath(`/summaries/${savedSummary.id}`);
+
+    // ✅ SINGLE, CLEAN RETURN
     return {
       success: true,
-      message: "PDF saved successfully",
-      data: savedSummary,
+      summaryId: savedSummary.id, // ⭐ THIS IS WHAT FE NEEDS
     };
-
-    //revalidate our cache
-    revalidatePath(`summaries/${savedSummary.id}`);
-
-    return {
-      successs:true,
-      id:savedSummary.id,
-    }
-
-
   } catch (error) {
     return {
       success: false,
