@@ -110,7 +110,7 @@ export default function UploadForm() {
             description:"Your PDF summary has been saved successfully! 🎉",
           }); 
           formRef.current?.reset();
-          router.push(`/summaries/${storeResult.id}`);
+          router.push(`/summaries/${storeResult.summaryId}`);
         }
     } 
   }
