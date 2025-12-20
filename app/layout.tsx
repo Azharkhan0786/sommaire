@@ -5,6 +5,7 @@ import Header from "@/components/common/header";
 import Footer from "@/components/common/footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 const fontSans = Fontsans({
   variable: "--font-sans",
@@ -12,11 +13,10 @@ const fontSans = Fontsans({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-
-
 export const metadata: Metadata = {
-  title: "Sommaire-AI-Powered PDF Summarization",
-  description: 'Save hours of reading time, Transform lenghty PDFs intp clear,concise and accurate summaries in seconds with our advanced AI technology',
+  title: "Sommaire - AI Powered PDF Summarization",
+  description:
+    "Save hours of reading time. Transform lengthy PDFs into clear, concise and accurate summaries in seconds with our advanced AI technology",
 };
 
 export default function RootLayout({
@@ -26,17 +26,25 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body
-        className={`${fontSans.variable} font-sans antialiased`}>
-         <div className="flex min-h-screen flex-col relative">
-           <Header />
-          <main className="flex-1">{children}</main>
-        <Footer />
-         </div>
-         <Toaster/>
-      </body>
-    </html>
+      <html lang="en">
+        <head>
+          {/* ✅ Razorpay Checkout Script */}
+          <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="beforeInteractive"
+          />
+        </head>
+
+        <body className={`${fontSans.variable} font-sans antialiased`}>
+          <div className="flex min-h-screen flex-col relative">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+
+          <Toaster />
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

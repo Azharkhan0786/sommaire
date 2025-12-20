@@ -4,7 +4,10 @@ import UploadFormInput from "./upload-form-input";
 import { z } from "zod";
 import { useUploadThing } from "@/utils/uploadthing";
 import { toast } from "sonner";
-import { generatePdfSummary, storePdfSummaryAction } from "@/actions/upload-actions";
+import {
+  generatePdfSummary,
+  storePdfSummaryAction,
+} from "@/actions/upload-actions";
 import { use, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -90,35 +93,31 @@ export default function UploadForm() {
         toast.success(" Saving PDF", {
           description: "Hang tight! We're saving your summarized PDF.✨",
         });
-      
 
         const fileUrl = resp[0].serverData.file.url;
-  const userId = resp[0].serverData.userId;
-  const fileName = file.name;
-  const title = file.name.replace(/\.pdf$/i, "");
+        const userId = resp[0].serverData.userId;
+        const fileName = file.name;
+        const title = file.name.replace(/\.pdf$/i, "");
 
-      
-        if(data.summary){
-        storeResult= await storePdfSummaryAction({
-        userId,
-        fileUrl,
-        summary: data.summary,
-        title,
-        fileName,
+        if (data.summary) {
+          storeResult = await storePdfSummaryAction({
+            userId,
+            fileUrl,
+            summary: data.summary,
+            title,
+            fileName,
           });
-          toast.success("Summary generated",{
-            description:"Your PDF summary has been saved successfully! 🎉",
-          }); 
+          toast.success("Summary generated", {
+            description: "Your PDF summary has been saved successfully! 🎉",
+          });
           formRef.current?.reset();
-          router.push(`/summaries/${storeResult.id}`);
+          router.push(`/summaries/${storeResult.summaryId}`);
         }
-    } 
-  }
-      catch (err) {
+      }
+    } catch (err) {
       console.error("error occured during submission", err);
       formRef.current?.reset();
-    } 
-    finally {
+    } finally {
       // ⬅️ THIS FIXES YOUR LOADING ISSUE
       setIsLoading(false);
     }
@@ -126,7 +125,7 @@ export default function UploadForm() {
 
   return (
     <div className="w-full max-w-2xl gap-8 flex flex-col">
-      <UploadFormInput 
+      <UploadFormInput
         isLoading={isLoading}
         ref={formRef}
         onSubmit={handleSubmit}
