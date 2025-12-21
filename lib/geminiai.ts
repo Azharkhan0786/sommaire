@@ -10,7 +10,7 @@ export async function generateSummaryFromGemini(pdfText: string) {
       systemInstruction: SUMMARY_SYSTEM_PROMPT,
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 2000,   // ⬅ FIX 1: Increase output limit
+        maxOutputTokens: 20000,   // ⬅ INCREASED: Allow longer summaries for comprehensive documents
       },
     });
 
