@@ -93,7 +93,7 @@ export async function POST(req: Request) {
 
     // 🔄 4. REVALIDATE UI
     revalidatePath("/");
-    revalidatePath("/dashboard.summaries${id}");
+    revalidatePath("/dashboard/summaries");
 
     return NextResponse.json({ success: true });
   } catch (error) {
